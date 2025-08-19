@@ -4,13 +4,18 @@ import {
   validatorCompiler,
 } from 'fastify-type-provider-zod'
 import { createLinkRoute } from './routes/create-link'
+import { redirectRoute } from './routes/redirect'
 
 const app = fastify()
 
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
 
+// Rotas específicas primeiro
 app.register(createLinkRoute)
+
+// Rota genérica de redirecionamento por último
+app.register(redirectRoute)
 
 app
   .listen({
