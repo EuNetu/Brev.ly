@@ -1,10 +1,16 @@
 import fastify from 'fastify'
+import {
+  serializerCompiler,
+  validatorCompiler,
+} from 'fastify-type-provider-zod'
+import { createLinkRoute } from './routes/create-link'
 
 const app = fastify()
 
-app.get('/testando', () => {
-  return { status: 'ok' }
-})
+app.setValidatorCompiler(validatorCompiler)
+app.setSerializerCompiler(serializerCompiler)
+
+app.register(createLinkRoute)
 
 app
   .listen({
@@ -12,5 +18,5 @@ app
     host: '0.0.0.0',
   })
   .then(() => {
-    console.log('server rodando na porta http://localhost:3333')
+    console.log('HTTP server running on http://localhost:3333')
   })
