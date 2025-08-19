@@ -4,6 +4,8 @@ import {
   validatorCompiler,
 } from 'fastify-type-provider-zod'
 import { createLinkRoute } from './routes/create-link'
+import { deleteLinkRoute } from './routes/delete-link'
+import { getLinksRoute } from './routes/get-all-links'
 import { redirectRoute } from './routes/redirect'
 
 const app = fastify()
@@ -11,10 +13,12 @@ const app = fastify()
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
 
-// Rotas específicas primeiro
+// Rotas específicas
 app.register(createLinkRoute)
+app.register(getLinksRoute)
+app.register(deleteLinkRoute)
 
-// Rota genérica de redirecionamento por último
+// Rota genérica
 app.register(redirectRoute)
 
 app
