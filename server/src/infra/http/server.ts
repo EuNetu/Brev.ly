@@ -1,3 +1,4 @@
+import fastifyCors from '@fastify/cors'
 import fastify from 'fastify'
 import {
   serializerCompiler,
@@ -9,6 +10,10 @@ import { getLinksRoute } from './routes/get-all-links'
 import { redirectRoute } from './routes/redirect'
 
 const app = fastify()
+
+app.register(fastifyCors, {
+  origin: '*',
+})
 
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
