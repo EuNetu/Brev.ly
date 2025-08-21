@@ -8,6 +8,7 @@ import { createLinkRoute } from './routes/create-link'
 import { deleteLinkRoute } from './routes/delete-link'
 import { getLinksRoute } from './routes/get-all-links'
 import { redirectRoute } from './routes/redirect'
+import { exportLinksRoute } from './routes/export-links'
 
 const app = fastify()
 
@@ -22,6 +23,7 @@ app.setSerializerCompiler(serializerCompiler)
 app.register(createLinkRoute)
 app.register(getLinksRoute)
 app.register(deleteLinkRoute)
+app.register(exportLinksRoute)
 
 // Rota genérica
 app.register(redirectRoute)
