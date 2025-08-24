@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch --env-file .env src/infra/http/server.ts",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "build": "tsup"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +31,7 @@
     "@types/node": "^24.3.0",
     "dotenv-cli": "^10.0.0",
     "drizzle-kit": "^0.31.4",
+    "tsup": "^8.5.0",
     "tsx": "^4.20.4",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
