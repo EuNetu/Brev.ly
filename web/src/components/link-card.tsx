@@ -1,5 +1,6 @@
 import {  Copy, Trash2 } from 'lucide-react'
 import { Button } from './ui/button'
+import { env } from '../lib/env'
 
 interface LinkCardProps {
     id: string
@@ -10,24 +11,25 @@ interface LinkCardProps {
 }
 
 export function LinkCard({ id, code, originalUrl, visitCount, onDelete }: LinkCardProps) {
-    // Idealmente, esta URL base viria de uma variável de ambiente
-    const shortUrl = `brev.ly/${code}`
+    const shortUrlText = `brev.ly/${code}`
+
+    const redirectUrl = `${env.VITE_API_URL}/${code}`
 
     function handleCopy() {
-        navigator.clipboard.writeText(`http://${shortUrl}`)
-        alert('Link copiado!') // Idealmente, usar um "toast"
+        navigator.clipboard.writeText(redirectUrl)
+        alert('Link copiado!')
     }
 
     return (
         <div className="flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-6 sm:flex-row sm:items-center">
             <div className="flex flex-1 flex-col gap-2 w-[40%]">
                 <a
-                    href={`http://${shortUrl}`}
+                    href={redirectUrl}
                     target="_blank"
                     className="truncate font-semibold text-blue-base hover:underline"
                     rel="noreferrer"
                 >
-                    {shortUrl}
+                    {shortUrlText}
                 </a>
                 <span className="truncate text-sm text-gray-400">{originalUrl}</span>
             </div>
