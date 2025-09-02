@@ -1,95 +1,188 @@
-import { useMutation } from '@tanstack/react-query'
-import { Link, LoaderCircle, PlusCircle } from 'lucide-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Download, Link, LoaderCircle } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
+import logo from './assets/Logo.svg'
+import { LinkCard } from './components/link-card'
 import { Button } from './components/ui/button'
 import { Input } from './components/ui/input'
 import { api } from './lib/axios'
 
+interface Link {
+  id: string
+  code: string
+  originalUrl: string
+  visitCount: number
+  createdAt: string
+}
+
 export function App() {
   const [url, setUrl] = useState('')
   const [code, setCode] = useState('')
+  const queryClient = useQueryClient()
+
+  const { data: links, isLoading } = useQuery<Link[]>({
+    queryKey: ['get-links'],
+    queryFn: async () => {
+      const response = await api.get('/links')
+      return response.data.links
+    },
+  })
 
   const { mutateAsync: createLink, isPending } = useMutation({
     mutationFn: async ({ url, code }: { url: string; code: string }) => {
       await api.post('/links', { url, code })
     },
     onSuccess: () => {
-      // Limpa os campos após o sucesso
       setUrl('')
       setCode('')
-      // Futuramente, vamos invalidar a query de listagem para atualizar a lista
-      alert('Link criado com sucesso!')
+      queryClient.invalidateQueries({ queryKey: ['get-links'] })
     },
     onError: (error) => {
-      // Idealmente, usaríamos uma biblioteca de "toasts" para mostrar erros
       console.error(error)
       alert('Erro ao criar o link. Verifique a consola.')
     },
   })
 
+  const { mutateAsync: deleteLink } = useMutation({
+    mutationFn: async (linkId: string) => {
+      await api.delete(`/links/${linkId}`)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['get-links'] })
+    },
+    onError: (error) => {
+      console.error(error)
+      alert('Erro ao apagar o link.')
+    },
+  })
+
+  const { mutateAsync: downloadCsv, isPending: isDownloadingCsv } = useMutation({
+    mutationFn: async () => {
+      const response = await api.post('/links/export')
+
+      // Abre a URL do relatório numa nova aba para iniciar o download
+      window.open(response.data.reportUrl, '_blank')
+    },
+    onError: (error) => {
+      console.error(error)
+      alert('Erro ao baixar o relatório CSV.')
+    },
+  })
+
+  
+
   async function handleCreateLink(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-
-    if (!url || !code) {
-      return
-    }
-
+    if (!url || !code) return
     await createLink({ url, code })
   }
 
   return (
     <div className="min-h-screen space-y-8 bg-gray-100 p-6">
-      <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-600">Brev.ly</h1>
+      <header className="mx-auto flex max-w-5xl justify-center md:justify-start">
+        <img src={logo} alt="Logo da Brev.ly" className="h-8" />
       </header>
 
-      <main className="mx-auto max-w-5xl space-y-8">
+      <main className="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-2">
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-600">Novo link</h2>
-          <form
-            onSubmit={handleCreateLink}
-            className="flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-6 sm:flex-row"
-          >
-            <div className="relative flex-1">
-              <Link className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <Input
-                placeholder="Digite ou cole o link original"
-                className="pl-10"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                required
-              />
-            </div>
+          <div className="rounded-lg bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-lg font-bold text-gray-600">Novo link</h2>
+            <form onSubmit={handleCreateLink} className="space-y-4">
+              <div className="space-y-1">
+                <label
+                  htmlFor="originalUrl"
+                  className="text-xs font-semibold uppercase text-gray-400"
+                >
+                  Link Original
+                </label>
+                <Input
+                  id="originalUrl"
+                  placeholder="www.exemplo.com.br"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-1">
+                <label
+                  htmlFor="code"
+                  className="text-xs font-semibold uppercase text-gray-400"
+                >
+                  Link Encurtado
+                </label>
+                <div className="relative">
+                  <Input
+                    id="code"
+                    placeholder="brev.ly/"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
 
-            <div className="relative flex-1 sm:max-w-[240px]">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400">
-                brev.ly/
-              </span>
-              <Input
-                placeholder="slug-personalizado"
-                className="pl-[68px]"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                required
-              />
-            </div>
-
-            <Button type="submit" disabled={isPending}>
-              {isPending ? (
-                <LoaderCircle className="h-4 w-4 animate-spin" />
-              ) : (
-                <PlusCircle className="h-4 w-4" />
-              )}
-              Salvar link
-            </Button>
-          </form>
+              <Button
+                variant="primary"
+                type="submit"
+                className="w-full"
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <LoaderCircle className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    Salvar link
+                  </>
+                )}
+              </Button>
+            </form>
+          </div>
         </div>
 
-        <div className="h-px w-full bg-gray-300" />
+        <div className="space-y-6">
+          <div className="rounded-lg bg-white p-6 shadow-sm">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-bold text-gray-600">Meus links</h2>
+              <Button
+                variant="secondary"
+                onClick={() => downloadCsv()}
+                disabled={isDownloadingCsv}
+              >
+                {isDownloadingCsv ? (
+                  <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="mr-2 h-4 w-4" />
+                )}
+                Baixar CSV
+              </Button>
+            </div>
 
-        <div>
-          <h2 className="text-xl font-semibold text-gray-600">Meus links</h2>
-          {/* A listagem dos links virá aqui */}
+            {isLoading && <p>A carregar links...</p>}
+
+            {links && links.length > 0 ? (
+              <div className="space-y-4">
+                {links.map((link) => (
+                  <LinkCard
+                    key={link.id}
+                    id={link.id}
+                    code={link.code}
+                    originalUrl={link.originalUrl}
+                    visitCount={link.visitCount}
+                    onDelete={() => deleteLink(link.id)}
+                  />
+                ))}
+              </div>
+            ) : (
+              !isLoading && (
+                <div className="flex flex-col items-center justify-center space-y-2 rounded-lg border border-dashed border-gray-300 py-12">
+                  <Link className="h-8 w-8 text-gray-400" />
+                  <p className="text-sm font-semibold uppercase text-gray-400">
+                    Ainda não existem links cadastrados
+                  </p>
+                </div>
+              )
+            )}
+          </div>
         </div>
       </main>
     </div>
