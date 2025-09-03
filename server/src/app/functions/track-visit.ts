@@ -11,7 +11,6 @@ type TrackVisitInput = z.input<typeof trackVisitInput>
 
 export async function trackVisit(input: TrackVisitInput) {
   const { linkId } = trackVisitInput.parse(input)
-
   await db
     .update(links)
     .set({

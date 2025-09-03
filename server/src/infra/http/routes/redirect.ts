@@ -20,15 +20,15 @@ export async function redirectRoute(app: FastifyInstance) {
       const link = await getLink({ code })
 
       if (!link) {
-        return reply.status(404).send({ message: 'Link não encontrado.' })
+        const frontendUrl = 'http://localhost:5173'
+        return reply.redirect(`${frontendUrl}/not-found`, 302)
       }
 
-      // Executa o rastreamento da visita sem bloquear o redirecionamento
       trackVisit({ linkId: link.id }).catch((error) => {
         console.error(`Failed to track visit for link ${link.id}`, error)
       })
 
-      return reply.redirect( link.originalUrl, 301)
+      return reply.redirect(link.originalUrl, 302)
     },
   )
 }

@@ -15,10 +15,10 @@ export async function deleteLinkRoute(app: FastifyInstance) {
         response: {
           204: z.null(),
           404: z.object({
-              message: z.string(),
+            message: z.string(),
           }),
           500: z.object({
-              message: z.string(),
+            message: z.string(),
           }),
         },
       },

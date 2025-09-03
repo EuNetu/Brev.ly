@@ -9,23 +9,24 @@ import { deleteLinkRoute } from './routes/delete-link'
 import { getLinksRoute } from './routes/get-all-links'
 import { redirectRoute } from './routes/redirect'
 import { exportLinksRoute } from './routes/export-links'
+import { getLinkDetailsRoute } from './routes/get-link-details'
 
 const app = fastify()
 
 app.register(fastifyCors, {
   origin: '*',
+  methods: ['GET', 'POST', 'DELETE'],
 })
 
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
 
-// Rotas específicas
 app.register(createLinkRoute)
 app.register(getLinksRoute)
 app.register(deleteLinkRoute)
 app.register(exportLinksRoute)
+app.register(getLinkDetailsRoute)
 
-// Rota genérica
 app.register(redirectRoute)
 
 app
