@@ -1,6 +1,7 @@
 import {  Copy, Trash2 } from 'lucide-react'
 import { Button } from './ui/button'
 import { env } from '../lib/env'
+import { Link } from 'react-router-dom'
 
 interface LinkCardProps {
     id: string
@@ -10,7 +11,13 @@ interface LinkCardProps {
     onDelete: () => void
 }
 
-export function LinkCard({ id, code, originalUrl, visitCount, onDelete }: LinkCardProps) {
+export function LinkCard({
+    id,
+    code,
+    originalUrl,
+    visitCount,
+    onDelete,
+}: LinkCardProps) {
     const shortUrlText = `brev.ly/${code}`
 
     const redirectUrl = `${env.VITE_API_URL}/${code}`
@@ -23,14 +30,13 @@ export function LinkCard({ id, code, originalUrl, visitCount, onDelete }: LinkCa
     return (
         <div className="flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-6 sm:flex-row sm:items-center">
             <div className="flex flex-1 flex-col gap-2 w-[40%]">
-                <a
-                    href={redirectUrl}
+                <Link
+                    to={`/${code}`}
                     target="_blank"
                     className="truncate font-semibold text-blue-base hover:underline"
-                    rel="noreferrer"
                 >
                     {shortUrlText}
-                </a>
+                </Link>
                 <span className="truncate text-sm text-gray-400">{originalUrl}</span>
             </div>
 
