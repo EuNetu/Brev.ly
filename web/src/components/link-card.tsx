@@ -1,7 +1,8 @@
-import {  Copy, Trash2 } from 'lucide-react'
+import { Copy, Trash2 } from 'lucide-react'
 import { Button } from './ui/button'
 import { env } from '../lib/env'
 import { Link } from 'react-router-dom'
+import Swal from 'sweetalert2'
 
 interface LinkCardProps {
     id: string
@@ -24,7 +25,15 @@ export function LinkCard({
 
     function handleCopy() {
         navigator.clipboard.writeText(redirectUrl)
-        alert('Link copiado!')
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Link copiado!',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+        })
     }
 
     return (

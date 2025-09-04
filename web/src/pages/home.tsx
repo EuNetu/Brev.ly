@@ -6,6 +6,7 @@ import { LinkCard } from '../components/link-card'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { api } from '../lib/axios'
+import Swal from 'sweetalert2'
 
 interface Link {
     id: string
@@ -39,7 +40,12 @@ export function HomePage() {
         },
         onError: (error) => {
             console.error(error)
-            alert('Erro ao criar o link. Verifique a consola.')
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Erro ao criar o link. O código já pode existir.',
+                confirmButtonColor: '#2C46B1',
+            })
         },
     })
 
@@ -52,7 +58,12 @@ export function HomePage() {
         },
         onError: (error) => {
             console.error(error)
-            alert('Erro ao apagar o link.')
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro!',
+                text: 'Não foi possível apagar o link.',
+                confirmButtonColor: '#2C46B1',
+            })
         },
     })
 
@@ -63,7 +74,12 @@ export function HomePage() {
         },
         onError: (error) => {
             console.error(error)
-            alert('Erro ao baixar o relatório CSV.')
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro!',
+                text: 'Não foi possível baixar o relatório CSV.',
+                confirmButtonColor: '#2C46B1',
+            })
         },
     })
 

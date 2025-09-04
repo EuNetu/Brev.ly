@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { LoaderCircle } from 'lucide-react'
 import { useEffect } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import logo from '../assets/Logo.svg'
 import { api } from '../lib/axios'
 

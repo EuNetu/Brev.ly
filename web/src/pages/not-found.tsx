@@ -5,7 +5,7 @@ export function NotFoundPage() {
     return (
         <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-6">
             <div className="flex flex-col items-center gap-6 rounded-lg bg-white p-12 text-center shadow-sm">
-                <img src={imagem404} alt="Logo da Brev.ly"  />
+                <img src={imagem404} alt="Logo da Brev.ly" />
                 <div className="space-y-2">
                     <h2 className="text-2xl font-bold text-gray-600">Link não encontrado</h2>
                     <p className="max-w-sm text-sm text-gray-400">
